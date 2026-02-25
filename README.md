@@ -22,8 +22,10 @@
 </p>
 
 <h3 align="center">
-A cli to browse and watch anime (alone AND with friends). This tool scrapes the site <a href="https://allmanga.to/">allmanga.</a>
+A cli to browse and watch anime (alone AND with friends). This tool scrapes the sites <a href="https://allmanga.to/">allmanga</a> and <a href="https://www.animeunity.so/">animeunity</a>.
 </h3>
+
+> **Note**: This is a fork of the original [ani-cli](https://github.com/pystardust/ani-cli) repository with additional features and improvements.
 
 <h1 align="center">
 	Showcase
@@ -33,6 +35,7 @@ A cli to browse and watch anime (alone AND with friends). This tool scrapes the 
 
 ## Table of Contents
 
+- [What's New in ani-cli-extended](#whats-new-in-ani-cli-extended)
 - [Fixing errors](#fixing-errors)
 - [Install](#install)
   - [Tier 1: Linux, Mac, Android](#tier-1-support-linux-mac-android)
@@ -45,6 +48,30 @@ A cli to browse and watch anime (alone AND with friends). This tool scrapes the 
 - [Homies](#homies)
 - [Contribution Guidelines](./CONTRIBUTING.md)
 - [Disclaimer](./disclaimer.md)
+
+## What's New in ani-cli-extended
+
+This fork extends the original `ani-cli` with the following enhancements:
+
+### Added Features
+
+- **AnimeUnity Source Support**: Stream anime from [animeunity.so](https://www.animeunity.so/) as an alternative to allmanga.to
+  - Use `--source animeunity` to select AnimeUnity as the scraping source
+  - Example: `ani-cli --source animeunity "attack on titan"`
+  - Supports all episodes with quality selection (480p, 720p, 1080p)
+  - Automatic user-agent handling for vixcloud.co streams
+
+### Bug Fixes
+
+- Fixed "Failed to extract embed URL" error for AnimeUnity by using their `/embed-url/{episode_id}` API
+- Fixed malformed video URLs for AnimeUnity streams (vixcloud.co playlist URLs)
+- Added proper user-agent handling for mpv when streaming from vixcloud.co
+
+### Technical Improvements
+
+- Modified `episodes_list_unity()` to return episode IDs alongside episode numbers
+- Rewrote `get_episode_url_unity()` to use AnimeUnity's API instead of parsing JavaScript-rendered HTML
+- Added user-agent flag for mpv/flatpak_mpv players when streaming from AnimeUnity source
 
 ## Fixing errors
 
@@ -129,9 +156,9 @@ Install dependencies [(See below)](#dependencies)
 Install [HomeBrew](https://docs.brew.sh/Installation) if not installed.
 
 ```sh
-git clone "https://github.com/pystardust/ani-cli.git" && cd ./ani-cli
+git clone "https://github.com/soyadrul/ani-cli-extended.git" && cd ./ani-cli-extended
 cp ./ani-cli "$(brew --prefix)"/bin
-cd .. && rm -rf ./ani-cli
+cd .. && rm -rf ./ani-cli-extended
 ```
 
 *To install (with Homebrew) the dependencies required on Mac OS, you can run:*
@@ -258,10 +285,10 @@ then run this:
 ```sh
 apk add grep sed curl fzf git aria2 ncurses patch
 apk add ffmpeg
-git clone --depth 1 https://github.com/pystardust/ani-cli ~/.ani-cli
-cp ~/.ani-cli/ani-cli /usr/local/bin/ani-cli
+git clone --depth 1 https://github.com/soyadrul/ani-cli-extended.git ~/.ani-cli-extended
+cp ~/.ani-cli-extended/ani-cli /usr/local/bin/ani-cli
 chmod +x /usr/local/bin/ani-cli
-rm -rf ~/.ani-cli
+rm -rf ~/.ani-cli-extended
 ```
 note that downloading is going to be very slow. This is an iSH issue, not an ani-cli issue.
 </details>
@@ -294,8 +321,8 @@ curl -o ~/.patch/patch.tar.zst https://mirror.sunred.org/archlinux/core/os/x86_6
 tar xvf ~/.patch/patch.tar.zst -C ~/.patch/
 cp ~/.patch/usr/bin/patch ~/.local/bin/
 
-git clone https://github.com/pystardust/ani-cli.git ~/.ani-cli
-cp ~/.ani-cli/ani-cli ~/.local/bin/
+git clone https://github.com/soyadrul/ani-cli-extended.git ~/.ani-cli-extended
+cp ~/.ani-cli-extended/ani-cli ~/.local/bin/
 
 flatpak install io.mpv.Mpv
 ```
@@ -353,8 +380,8 @@ cp ~/.patch/usr/bin/patch ~/.local/bin/
 ##### Install ani-cli:
 
 ```sh
-git clone https://github.com/pystardust/ani-cli.git ~/.ani-cli
-cp ~/.ani-cli/ani-cli ~/.local/bin/
+git clone https://github.com/soyadrul/ani-cli-extended.git ~/.ani-cli-extended
+cp ~/.ani-cli-extended/ani-cli ~/.local/bin/
 ```
 
 ##### Optional: add desktop entry:
@@ -377,9 +404,9 @@ In Steam Desktop app:
 
 ```sh
 sudo pkg install mpv fzf aria2 yt-dlp patch git
-git clone "https://github.com/pystardust/ani-cli.git"
-sudo cp ani-cli/ani-cli /usr/local/bin
-rm -rf ani-cli
+git clone "https://github.com/soyadrul/ani-cli-extended.git"
+sudo cp ani-cli-extended/ani-cli /usr/local/bin
+rm -rf ani-cli-extended
 ```
 
 #### Installation in steps:
@@ -401,9 +428,9 @@ sudo pkg install git
 install from source:
 
 ```sh
-git clone "https://github.com/pystardust/ani-cli.git"
-sudo cp ani-cli/ani-cli /usr/local/bin
-rm -rf ani-cli
+git clone "https://github.com/soyadrul/ani-cli-extended.git"
+sudo cp ani-cli-extended/ani-cli /usr/local/bin
+rm -rf ani-cli-extended
 ```
 
 </details>
@@ -415,9 +442,9 @@ rm -rf ani-cli
 Install dependencies [(See below)](#dependencies)
 
 ```sh
-git clone "https://github.com/pystardust/ani-cli.git"
-sudo cp ani-cli/ani-cli /usr/local/bin
-rm -rf ani-cli
+git clone "https://github.com/soyadrul/ani-cli-extended.git"
+sudo cp ani-cli-extended/ani-cli /usr/local/bin
+rm -rf ani-cli-extended
 ```
 
 ## Uninstall
@@ -475,7 +502,7 @@ rm "$PREFIX/bin/ani-cli"
 * Steam Deck
 ```sh
 rm "~/.local/bin/ani-cli"
-rm -rf ~/.ani-cli
+rm -rf ~/.ani-cli-extended
 ```
 optionally: remove dependencies:
 ```sh
@@ -524,11 +551,11 @@ Ani-skip uses the external lua script function of mpv and as such â€“ for now â€
 
 ## FAQ
 <details>
-	
+
 * Can I change subtitle language or turn them off? - No, the subtitles are baked into the video.
 * Can I watch dub? - Yes, use `--dub`.
 * Can I change dub language? - No.
-* Can I change media source? - No (unless you can scrape that source yourself).
+* Can I change media source? - **Yes (in ani-cli-extended)**: Use `--source animeunity` to stream from AnimeUnity instead of allmanga.to. Example: `ani-cli --source animeunity "attack on titan"`.
 * Can I use vlc? - Yes, use `--vlc` or `export ANI_CLI_PLAYER=vlc`.
 * Can I adjust resolution? - Yes, use `-q resolution`, for example `ani-cli -q 1080`.
 * How can I download? - Use `-d`, it will download into your working directory.
