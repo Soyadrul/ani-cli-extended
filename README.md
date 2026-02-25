@@ -60,6 +60,7 @@ This fork extends the original `ani-cli` with the following enhancements:
   - Example: `ani-cli --source animeunity "attack on titan"`
   - Supports all episodes with quality selection (480p, 720p, 1080p)
   - Automatic user-agent handling for vixcloud.co streams
+  - **Italian & English dubs available**: Select your preferred audio/subtitle language from the fzf menu when choosing episodes
 
 ### Bug Fixes
 
@@ -554,7 +555,7 @@ Ani-skip uses the external lua script function of mpv and as such â€“ for now â€
 
 * Can I change subtitle language or turn them off? - No, the subtitles are baked into the video.
 * Can I watch dub? - Yes, use `--dub`.
-* Can I change dub language? - No.
+* Can I change dub language? - No (except for AnimeUnity source which offers both Italian and English dubs - select from the fzf menu when choosing season/episode).
 * Can I change media source? - **Yes (in ani-cli-extended)**: Use `--source animeunity` to stream from AnimeUnity instead of allmanga.to. Example: `ani-cli --source animeunity "attack on titan"`.
 * Can I use vlc? - Yes, use `--vlc` or `export ANI_CLI_PLAYER=vlc`.
 * Can I adjust resolution? - Yes, use `-q resolution`, for example `ani-cli -q 1080`.
