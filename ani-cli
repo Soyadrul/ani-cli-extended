@@ -82,6 +82,8 @@ help_info() {
         Use given title as ani-skip query
       -N, --nextep-countdown
         Display a countdown to the next episode
+      --url-only
+        Print the video URL to stdout and exit (no player launched)
       -U, --update
         Update the script
       --source <source>
@@ -447,13 +449,16 @@ download() {
 }
 
 play_episode() {
-    [ "$log_episode" = 1 ] && [ "$player_function" != "debug" ] && [ "$player_function" != "download" ] && command -v logger >/dev/null && logger -t ani-cli "${allanime_title}${ep_no}"
+    [ "$log_episode" = 1 ] && [ "$player_function" != "debug" ] && [ "$player_function" != "download" ] && [ "$player_function" != "url_only" ] && command -v logger >/dev/null && logger -t ani-cli "${allanime_title}${ep_no}"
     [ "$skip_intro" = 1 ] && skip_flag="$(ani-skip -q "$mal_id" -e "$ep_no")"
     [ -z "$episode" ] && get_episode_url
     # shellcheck disable=SC2086
     case "$player_function" in
         debug)
             printf "All links:\n%s\nSelected link:\n" "$links"
+            printf "%s\n" "$episode"
+            ;;
+        url_only)
             printf "%s\n" "$episode"
             ;;
         mpv*)
@@ -540,7 +545,7 @@ play() {
         play_episode
     fi
     # moves up to stored position and deletes to end
-    [ "$player_function" != "debug" ] && [ "$player_function" != "download" ] && tput rc && tput ed
+    [ "$player_function" != "debug" ] && [ "$player_function" != "download" ] && [ "$player_function" != "url_only" ] && tput rc && tput ed
 }
 
 # MAIN
@@ -556,6 +561,7 @@ mode="${ANI_CLI_MODE:-sub}"
 download_dir="${ANI_CLI_DOWNLOAD_DIR:-.}"
 log_episode="${ANI_CLI_LOG:-1}"
 quality="${ANI_CLI_QUALITY:-best}"
+#url_only=0 # 0 = disabled, 1 = enabled
 case "$(uname -a | cut -d " " -f 1,3-)" in
     *Darwin*) player_function="${ANI_CLI_PLAYER:-$(where_iina)}" ;;   # mac OS
     *ndroid*) player_function="${ANI_CLI_PLAYER:-android_mpv}" ;;     # Android OS (termux)
@@ -644,6 +650,7 @@ while [ $# -gt 0 ]; do
             shift
             ;;
         -N | --nextep-countdown) search=nextep ;;
+        --url-only) player_function=url_only ;;
         -U | --update) update_script ;;
         --source)
             [ $# -lt 2 ] && die "missing argument!"
@@ -663,6 +670,7 @@ dep_ch "curl" "sed" "grep" || true
 dep_ch "fzf" || true
 case "$player_function" in
     debug) ;;
+    url_only) ;;
     download) dep_ch "ffmpeg" "aria2c" ;;
     android*) printf "\33[2K\rChecking of players on Android is disabled\n" ;;
     *iSH*) printf "\33[2K\rChecking of players on iOS is disabled\n" ;;
@@ -742,7 +750,7 @@ tput sc
 
 # playback & loop
 play
-[ "$player_function" = "download" ] || [ "$player_function" = "debug" ] && exit 0
+[ "$player_function" = "download" ] || [ "$player_function" = "debug" ] || [ "$player_function" = "url_only" ] && exit 0
 
 while cmd=$(printf "next\nreplay\nprevious\nselect\nchange_quality\nquit" | nth "Playing episode $ep_no of $title... "); do
     case "$cmd" in
